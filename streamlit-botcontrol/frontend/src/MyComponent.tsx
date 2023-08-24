@@ -17,7 +17,7 @@ interface State {
  * This is a React-based component template. The `render()` function is called
  * automatically when your component should be re-rendered.
  */
-class MyComponent extends StreamlitComponentBase<State> {
+class BotControl extends StreamlitComponentBase<State> {
   public state = { numClicksU: 0, numClicksD: 0, numClicksL: 0, numClicksR: 0, isFocused: false }
 
   public render = (): ReactNode => {
@@ -94,7 +94,7 @@ class MyComponent extends StreamlitComponentBase<State> {
     // Increment state.numClicks, and pass the new value back to
     // Streamlit via `Streamlit.setComponentValue`.
     this.setState(
-      prevState => ({ numClicksU: prevState.numClicksU + 1 }),
+      prevState => ({ numClicksU: 1 }),
       () => Streamlit.setComponentValue(this.state.numClicksU)
     )
   }
@@ -102,7 +102,7 @@ class MyComponent extends StreamlitComponentBase<State> {
     // Increment state.numClicks, and pass the new value back to
     // Streamlit via `Streamlit.setComponentValue`.
     this.setState(
-      prevState => ({ numClicksD: prevState.numClicksD + 1 }),
+      prevState => ({ numClicksD: 2 }),
       () => Streamlit.setComponentValue(this.state.numClicksD)
     )
   }
@@ -110,7 +110,7 @@ class MyComponent extends StreamlitComponentBase<State> {
     // Increment state.numClicks, and pass the new value back to
     // Streamlit via `Streamlit.setComponentValue`.
     this.setState(
-      prevState => ({ numClicksL: prevState.numClicksL + 1 }),
+      prevState => ({ numClicksL: 3 }),
       () => Streamlit.setComponentValue(this.state.numClicksL)
     )
   }
@@ -118,7 +118,7 @@ class MyComponent extends StreamlitComponentBase<State> {
     // Increment state.numClicks, and pass the new value back to
     // Streamlit via `Streamlit.setComponentValue`.
     this.setState(
-      prevState => ({ numClicksR: prevState.numClicksR + 1 }),
+      prevState => ({ numClicksR: 4 }),
       () => Streamlit.setComponentValue(this.state.numClicksR)
     )
   }
@@ -139,4 +139,4 @@ class MyComponent extends StreamlitComponentBase<State> {
 // passing arguments from Python -> Component.
 //
 // You don't need to edit withStreamlitConnection (but you're welcome to!).
-export default withStreamlitConnection(MyComponent)
+export default withStreamlitConnection(BotControl)

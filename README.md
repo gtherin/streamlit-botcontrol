@@ -16,11 +16,12 @@ https://docs.streamlit.io/library/components/create
 
 
 # Frontend server
-~/projects/streamlit-botcontrol/streamlit-botcontrol/frontend
+cd ~/projects/streamlit-botcontrol/streamlit-botcontrol/frontend
 npm install && npm start
 
-
-trianer-activate...
+trianer-activate-env_py3.10 
+cd streamlit-botcontrol
+export DEV_MODE=True
 streamlit run streamlit-botcontrol/__init__.py
 
 

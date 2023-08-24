@@ -2,14 +2,9 @@ import os
 import streamlit
 import streamlit.components.v1 as components
 
-
-# st.components.v1.iframe
-
 # Create a _RELEASE constant. We'll set this to False while we're developing
 # the component, and True when we're ready to package and distribute it.
-# (This is, of course, optional - there are innumerable ways to manage your
-# release process.)
-_RELEASE = False
+_RELEASE = not ("DEV_MODE" in os.environ["DEV_MODE"] and os.environ["DEV_MODE"] == "True")
 
 # Declare a Streamlit component. `declare_component` returns a function
 # that is used to create instances of the component. We're naming this
@@ -22,22 +17,21 @@ _RELEASE = False
 # your component frontend. Everything else we do in this file is simply a
 # best practice.
 
+
 if not _RELEASE:
-    _component_func = components.declare_component(
-        "my_component",
-        url="http://localhost:3001",  # Pass `url` here to tell Streamlit that the component will be served
-    )
+    # Pass `url` here to tell Streamlit that the component will be served
+    _component_func = components.declare_component("bot_control", url="http://localhost:3001")
 else:
     # When we're distributing a production version of the component, we'll
     # replace the `url` param with `path`, and point it to the component's
     # build directory:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend-react/build")
-    _component_func = components.declare_component("my_component", path=build_dir)
+    _component_func = components.declare_component("bot_control", path=build_dir)
 
 
-def my_component(name, key=None):
-    """Create a new instance of "my_component".
+def bot_control(name, key=None):
+    """Create a new instance of "bot_control".
 
     Parameters
     ----------
@@ -57,17 +51,13 @@ def my_component(name, key=None):
         frontend.)
 
     """
-    # Call through to our private component function. Arguments we pass here
-    # will be sent to the frontend, where they'll be available in an "args"
-    # dictionary.
-    #
     # "default" is a special argument that specifies the initial return
     # value of the component before the user has interacted with it.
-    component_value = _component_func(name=name, key=key, default=0)
+    direction = _component_func(name=name, key=key, default=0)
 
-    # We could modify the value returned from the component if we wanted.
-    # There's no need to do this in our simple example - but it's an option.
-    return component_value
+    directions = {1: "UP", 2: "DOWN", 3: "LEFT", 4: "RIGHT", 5: "STOP"}
+
+    return directions[direction]
 
 
 # Add some test code to play with the component while it's in development.
@@ -79,7 +69,9 @@ if not _RELEASE:
 
     # Create an instance of our component with a constant `name` arg, and
     # print its output value.
-    num_clicks = my_component("World")
+    num_clicks = bot_control("World")
+    print("FFFFFFFFFFFFFF", num_clicks, "GGGGGGGGGGGG")
+
     st.markdown("You've clicked %s times!" % int(num_clicks))
 
     st.markdown("---")
@@ -94,6 +86,6 @@ if not _RELEASE:
     # and lose its current state. In this case, we want to vary the component's
     # "name" argument without having it get recreated.
     name_input = st.text_input("Enter a name", value="Streamlit")
-    num_clicks = my_component(name_input, key="foo")
+    num_clicks = bot_control(name_input, key="foo")
     st.markdown("You've clicked %s times!" % int(num_clicks))
     st.write(num_clicks)
