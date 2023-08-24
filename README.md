@@ -1,3 +1,8 @@
+In beta mode
+
+Description: A streamlit package with widget dedicated to bot control
+
+
 # streamlit-custom-component
 
 https://docs.streamlit.io/library/components
