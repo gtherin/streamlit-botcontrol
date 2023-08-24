@@ -1,0 +1,3 @@
+streamlit-botcontrol/frontend/node_modules/**
+**egg-info
+**.egg-info/**
