@@ -15,7 +15,7 @@ if "music" not in st.session_state:
 if "music_volume" not in st.session_state:
     st.session_state["music_volume"] = 60
 if "video_color" not in st.session_state:
-    st.session_state.video_color = "#ff0000"
+    st.session_state["video_color"] = "blue" # #ff0000
 if "video_color_is" not in st.session_state:
     st.session_state.video_color_is = False
 if "bot_ip" not in st.session_state:
@@ -25,7 +25,7 @@ if "bot_port" not in st.session_state:
 if "video_port" not in st.session_state:
     st.session_state["video_port"] = 9000
 if "is_server_on" not in st.session_state:
-    st.session_state["is_server_on"] = False
+    st.session_state["is_server_on"] = True
 
 
 def send_bot_command(command, from_state=None, fake=False):
@@ -42,23 +42,17 @@ def send_bot_command(command, from_state=None, fake=False):
         r = requests.get(command)
         print(r.text)
 
-    # time.sleep(1)
-    # st.experimental_rerun()
-
 
 def send_video_command(command):
+    if "video_color" == command:
+        st.session_state.video_color_is =True
+
     if "video_color" in command:
-        if st.session_state.video_color_is:
-            color = st.session_state.video_color
-        else:
-            color = "off"
-        command = f"{command}/{color}"
+        color = st.session_state.video_color if st.session_state.video_color_is else "off"
+        command = f"video_color/{color.replace('#', 'DIEZ_')}"
     else:
         status = st.session_state[command]
-        if status:
-            command = f"{command}/on"
-        else:
-            command = f"{command}/off"
+        command = f"{command}/on" if status else f"{command}/off"
 
     send_bot_command(command)
 
@@ -86,11 +80,21 @@ def main():
             key="video_color_is",
             on_change=lambda: send_video_command("video_color_is"),
         )
-        st.color_picker(
-            "Pick color:",
-            key="video_color",
-            on_change=lambda: send_video_command("video_color"),
-        )
+
+        if 1:
+            colors = ["red", "orange", "yellow", "green", "blue", "purple"]
+            st.selectbox(
+                "Pick color :",
+                colors,
+                key="video_color",
+                on_change=lambda: send_video_command("video_color"), disabled=not st.session_state.video_color_is
+            )
+        else:
+            st.color_picker(
+                "Pick color :",
+                key="video_color",
+                on_change=lambda: send_video_command("video_color"), disabled=not st.session_state.video_color_is
+            )
         st.checkbox(
             "📷Do recognize objects ?",
             key="video_object_is",
@@ -103,38 +107,39 @@ def main():
         unsafe_allow_html=True,
     )
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns(9)
     with col1:
-        st.header("")
+        st.subheader("Left")
+        st.button("🚙:arrow_upper_left:", type="primary", on_click=lambda: send_bot_command("move/20/30/500"))
+        st.button("🚙:arrow_left:", type="primary", on_click=lambda: send_bot_command("move/20/30/500"))
+        st.button("🚙:arrow_lower_left:", type="primary", on_click=lambda: send_bot_command("move/-20/-30/500"))
     with col2:
-        if st.button("Forward :arrow_up:", type="primary", on_click=lambda: send_bot_command("basic_forward")):
-            pass
+        st.subheader("Middle")
+        st.button("🚙:arrow_up:", type="primary", on_click=lambda: send_bot_command("move/50/0/500"))
+        st.button("🚙:arrows_counterclockwise:", type="primary", on_click=lambda: send_bot_command("move/0/0/500"))
+        st.button("🚙:arrow_down:", type="primary", on_click=lambda: send_bot_command("move/-20/0/500"))
     with col3:
-        st.header("")
+        st.subheader("Right")
+        st.button("🚙:arrow_upper_right:", type="primary", on_click=lambda: send_bot_command("move/20/-30/500"))
+        st.button("🚙:arrow_right:", type="primary", on_click=lambda: send_bot_command("move/20/-30/500"))
+        st.button("🚙:arrow_lower_right:", type="primary", on_click=lambda: send_bot_command("move/-20/30/500"))
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button("Left", type="primary", on_click=lambda: send_bot_command("left")):
-            pass
-    with col2:
-        st.header("")
-    with col3:
-        if st.button("Right", type="primary", on_click=lambda: send_bot_command("right")):
-            pass
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.header("")
-    with col2:
-        if st.button("Backward :arrow_down:", type="primary", on_click=lambda: send_bot_command("backward")):
-            pass
-    with col3:
-        st.header("")
+    with col7:
+        st.button("🎥:arrow_up:", type="primary", on_click=lambda: send_bot_command("servo/UP/10"))
+        st.button("🎥:arrow_down:", type="primary", on_click=lambda: send_bot_command("servo/DOWN/10"))
+    with col8:
+        st.button("🎥:arrow_left:", type="primary", on_click=lambda: send_bot_command("servo/LEFT/10"))
+    with col9:
+        st.button("🎥:arrow_right:", type="primary", on_click=lambda: send_bot_command("servo/RIGHT/10"))
 
     if st.button("⚙️vent", type="primary", on_click=lambda: send_bot_command("vent")):
         st.write("Very cool")
 
+
+
     components.iframe("http://192.168.0.47:9000/mjpg", width=700, height=500)
+
 
     col1, col2 = st.columns(2)
     with col1:
@@ -151,7 +156,7 @@ def main():
             "Music level",
             0,
             100,
-            value=st.session_state["music_volume"],
+            key="music_volume",
             on_change=lambda: send_bot_command("music_volume/STATE", from_state="music_volume"),
         )
 
