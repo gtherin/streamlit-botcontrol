@@ -23,6 +23,7 @@ trianer-activate-env_py3.10
 cd streamlit-botcontrol
 export DEV_MODE=True
 streamlit run streamlit-botcontrol/__init__.py
+streamlit run app.py
 
 
 ## Installation instructions
