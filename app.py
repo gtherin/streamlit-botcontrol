@@ -42,6 +42,14 @@ def send_bot_command(command, from_state=None, fake=False):
         print(r.text)
 
 
+def send_bot_thread(command):
+    if st.session_state[command]:
+        command = "start_thread/" + command
+    else:
+        command = "stop_thread/" + command
+    send_bot_command(command)
+
+
 def send_video_command(command):
     if "video_color" == command:
         st.session_state.video_color_is = True
@@ -258,11 +266,25 @@ def main():
             on_click=lambda: send_bot_command("take_photo"),
             disabled=not st.session_state.is_on,
         )
-        st.button(
-            "➿line_following",
-            type="primary",
-            on_click=lambda: send_bot_command("line_following"),
-            disabled=not st.session_state.is_on,
+        if 0:
+            st.button(
+                "➿line_following",
+                type="primary",
+                on_click=lambda: send_bot_command("line_following"),
+                disabled=not st.session_state.is_on,
+            )
+
+    st.toggle("➿line_following", key="line_following", on_change=lambda: send_bot_thread("line_following"))
+    st.toggle("infinite_loop", key="infinite_loop", on_change=lambda: send_bot_thread("infinite_loop"))
+    st.toggle("horn", key="horn", on_change=lambda: send_bot_thread("horn"))
+
+    if 0:
+        import streamlit_toggle as tog
+
+        tog.st_toggle_switch(
+            label="Label",
+            key="Key1",
+            on_color="primary",
         )
 
     components.iframe("http://192.168.0.47:9000/mjpg", width=700, height=500)
