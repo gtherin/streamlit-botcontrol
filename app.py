@@ -19,7 +19,7 @@ default_data = {
     "video_port": 9000,
     "is_on": False,
     "video_color_is": False,
-    "bot_ip": "192.168.0.47",
+    "bot_ip": "192.168.1.101",
 }
 
 for k, v in default_data.items():
@@ -287,7 +287,7 @@ def main():
             on_color="primary",
         )
 
-    components.iframe("http://192.168.0.47:9000/mjpg", width=700, height=500)
+    components.iframe("http://192.168.1.101:9000/mjpg", width=700, height=500)
 
     col1, col2, col3 = st.columns(3)
 
