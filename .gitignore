@@ -4,3 +4,4 @@ streamlit_botcontrol/frontend/package-lock.json
 **.egg-info/**
 data/*
 src/pix/*
+**.pyc

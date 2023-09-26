@@ -1,2 +1,7 @@
 streamlit
+pandas
+opencv-python
+face_recognition
+scikit-learn
+matplotlib
 -e .
