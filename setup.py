@@ -6,27 +6,29 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
-    name="streamlit-botcontrol",
-    version="0.0.1",
+    name="streamlit_botcontrol",
+    version="1.0.1",
     author="Guillaume Therin",
     author_email="gt@guydegnol.net",
-    description="Streamlit component that allows you control a bot",
+    description="Streamlit component that allows you to control a bot",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(where="src"),
+    package_dir={"": "src"},
     include_package_data=True,
-    classifiers=[],
-    python_requires=">=3.7",
-    install_requires=["streamlit >= 0.63"],
-    extras_require={
-        "devel": [
-            "wheel",
-            "pytest==7.4.0",
-            "playwright==1.36.0",
-            "requests==2.31.0",
-            "pytest-playwright-snapshot==1.0",
-            "pytest-rerunfailures==12.0",
-        ]
-    },
+    url="",
+    license="MIT License",
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+    ],
+    python_requires=">=3.8",
+    install_requires=["streamlit>=1.2", "jinja2"],
+    keywords="python streamlit bot component",
 )

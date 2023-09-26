@@ -1,1 +1,3 @@
-recursive-include my_component/frontend/build *
+recursive-include src/streamlit_botcontrol/frontend *
+include README.md
+include LICENSE
