@@ -4,6 +4,17 @@ import {
   withStreamlitConnection,
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
+import { useState } from 'react';
+//import {Joystick} from "./Joystick"
+//import {Game} from "./TicTacToe"
+
+
+enum InteractionEvents {
+  PointerDown = "pointerdown",
+  PointerMove = "pointermove",
+  PointerUp = "pointerup"
+}
+
 
 interface State {
   numClicksU: number
@@ -30,6 +41,11 @@ class BotControl extends StreamlitComponentBase<State> {
     // streamlit app.
     const { theme } = this.props
     const style: React.CSSProperties = {}
+    const joyStyle = {
+      width: '200px',
+      height: '200px',
+      margin: '50px',
+    };
 
     // Maintain compatibility with older versions of Streamlit that don't send
     // a theme object.
@@ -46,6 +62,8 @@ class BotControl extends StreamlitComponentBase<State> {
     // When the button is clicked, we'll increment our "numClicks" state
     // variable, and send its new value back to Streamlit, where it'll
     // be available to the Python program.
+    //return Game();
+
     return (
       <span>
         Bonjour, {name}! &nbsp;
@@ -85,6 +103,14 @@ class BotControl extends StreamlitComponentBase<State> {
         >
           Go right
         </button>
+        <div id="joy2Div" style={joyStyle}></div>
+		<div>
+			Posizione X:<input id="joy3PosizioneX" type="text" /><br />
+			Posizione Y:<input id="joy3PosizioneY" type="text" /><br />
+			Direzione:<input id="joy3Direzione" type="text" /><br />
+			X :<input id="joy3X" type="text" />
+			Y :<input id="joy3Y" type="text" />
+		</div>
       </span>
     )
   }
@@ -140,3 +166,5 @@ class BotControl extends StreamlitComponentBase<State> {
 //
 // You don't need to edit withStreamlitConnection (but you're welcome to!).
 export default withStreamlitConnection(BotControl)
+
+//export default withStreamlitConnection(Joystick)
