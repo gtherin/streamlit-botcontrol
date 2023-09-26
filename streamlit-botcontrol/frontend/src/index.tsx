@@ -1,10 +1,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import MyComponent from "./MyComponent"
+import BotControl from "./BotControl"
 
 ReactDOM.render(
   <React.StrictMode>
-    <MyComponent />
+    <BotControl />
   </React.StrictMode>,
   document.getElementById("root")
 )

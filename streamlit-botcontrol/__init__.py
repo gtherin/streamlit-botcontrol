@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 
 # Create a _RELEASE constant. We'll set this to False while we're developing
 # the component, and True when we're ready to package and distribute it.
-_RELEASE = not ("DEV_MODE" in os.environ["DEV_MODE"] and os.environ["DEV_MODE"] == "True")
+_RELEASE = False#not ("DEV_MODE" in os.environ["DEV_MODE"] and os.environ["DEV_MODE"] == "True")
 
 # Declare a Streamlit component. `declare_component` returns a function
 # that is used to create instances of the component. We're naming this
@@ -53,8 +53,7 @@ def bot_control(name, key=None):
     """
     # "default" is a special argument that specifies the initial return
     # value of the component before the user has interacted with it.
-    direction = _component_func(name=name, key=key, default=0)
-
+    direction = _component_func(name=name, key=key, default=5)
     directions = {1: "UP", 2: "DOWN", 3: "LEFT", 4: "RIGHT", 5: "STOP"}
 
     return directions[direction]
@@ -72,7 +71,8 @@ if not _RELEASE:
     num_clicks = bot_control("World")
     print("FFFFFFFFFFFFFF", num_clicks, "GGGGGGGGGGGG")
 
-    st.markdown("You've clicked %s times!" % int(num_clicks))
+    #st.markdown("You've clicked %s times!" % int(num_clicks))
+    st.markdown("You've clicked %s times!" % num_clicks)
 
     st.markdown("---")
     st.subheader("Component with variable args")
@@ -87,5 +87,4 @@ if not _RELEASE:
     # "name" argument without having it get recreated.
     name_input = st.text_input("Enter a name", value="Streamlit")
     num_clicks = bot_control(name_input, key="foo")
-    st.markdown("You've clicked %s times!" % int(num_clicks))
     st.write(num_clicks)
