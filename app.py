@@ -2,14 +2,25 @@ import time
 import requests
 import streamlit as st
 import streamlit.components.v1 as components
+from PIL import Image, ImageDraw
 
-# from streamlit_botcontrol import bot_control
+from streamlit_botcontrol import streamlit_botcontrol
 
 st.set_page_config(
-    page_title="🤖 Streamlit Bot Control",
+    page_title="Streamlit Bot Control",
     initial_sidebar_state="expanded",
+    page_icon="🤖",
     layout="wide",
 )
+
+if "joy_on" not in st.session_state:
+    st.session_state["joy_x"] = 0
+    st.session_state["joy_y"] = 0
+    st.session_state["joy_on"] = False
+
+import time
+import numpy as np
+
 
 default_data = {
     "music": "nothing",
@@ -19,7 +30,7 @@ default_data = {
     "video_port": 9000,
     "is_on": False,
     "video_color_is": False,
-    "bot_ip": "192.168.1.101",
+    "bot_ip": "192.168.1.122",
 }
 
 for k, v in default_data.items():
@@ -36,7 +47,6 @@ def send_bot_command(command, from_state=None, fake=False):
         command = "💥🚧" + command
 
     st.toast(command, icon="⚙️")
-    print(command)
     if send_request:
         r = requests.get(command)
         print(r.text)
@@ -68,25 +78,122 @@ def set_var(variable, value):
     st.session_state[variable] = value
 
 
+def generate_targets():
+    from cairosvg import svg2png
+
+    caliases = dict(
+        zip(
+            ["purple", "red", "orange", "blue", "green", "yellow", "black"],
+            ["#581845", "#C70039", "#FF5733", "#4F77AA", "#52DE97", "#FBE555", "black"],
+        )
+    )
+
+    def generate(color, tcolor, text, filename):
+        tcolor, color = caliases[tcolor], caliases[color]
+        x0 = 44
+
+        svg2png(bytestring=f"""<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">\n
+<style>
+        .Rrrrr {{font: bold 40px serif;fill: {tcolor};}}
+</style>
+<path fill="#FFF" stroke="{color}" stroke-width="50" d="m149,25a125,125 0 1,0 2,0zm2,100a25,25 0 1,1-2,0z"/>
+<line x1="150" y1="0" x2="150" y2="300" stroke="{caliases['blue']}" stroke-width="3" />
+<line x1="0" y1="150" x2="300" y2="150" stroke="{caliases['blue']}" stroke-width="3" />
+<line x1="{x0}" y1="{x0}" x2="{300-x0}" y2="{300-x0}" stroke="{caliases['blue']}" stroke-width="3" />
+<line x1="{x0}" y1="{300-x0}" x2="{300-x0}" y2="{x0}" stroke="{caliases['blue']}" stroke-width="3" />
+{text}\n</svg>""", write_to=filename)
+
+    generate("green", 'red', '<text x="60" y="160" class="Rrrrr">Camera</text>', "joy_camera.png")
+    generate("orange", 'purple', '<text x="60" y="160" class="Rrrrr">Remote</text>', "joy_remote.png")
+
+
+def get_ellipse_coords(point: tuple[int, int]) -> tuple[int, int, int, int]:
+    center = point
+    radius = 10
+    return (center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius)
+
 def main():
+
+    if 1:
+        generate_targets()
+    from PIL import Image
+
+    col1, col2 = st.columns(2)
+    with col1:
+        with Image.open("joy_remote.png") as img:
+            draw_remote = ImageDraw.Draw(img)
+            value_remote = streamlit_botcontrol("joy_remote.png", width=250, key="joy_remote")
+
+        st.session_state["joy_on"] = value_remote
+        if st.session_state["joy_on"]:
+
+            xmax, ymax = 225, 225
+            xmiddle, ymiddle = int(0.5*xmax), int(0.5*ymax)
+            xs = np.linspace(value_remote["x"], xmiddle, 3)
+            ys = np.linspace(value_remote["y"], ymiddle, 3)
+
+            xcs, yxc = int(200*(value_remote["x"]-xmiddle)/xmax), int(-200*(value_remote["y"]-ymiddle)/ymax)
+            st.write(f"move/{yxc}/{xcs}/500")
+            send_bot_command(f"move/{yxc}/{xcs}/200")
+            st.write(f"{xcs}, {yxc}")
+
+            for t in range(3):
+                point = xs[t], ys[t]
+                point = xmiddle, ymiddle
+
+                coords = get_ellipse_coords(point)
+                draw_remote.ellipse(coords, fill="blue")
+            st.session_state["joy_on"] = False
+        
+        st.write(value_remote)
+
+    with col2:
+        with Image.open("joy_camera.png") as img:
+            draw_camera = ImageDraw.Draw(img)
+            value_camera = streamlit_botcontrol("joy_camera.png", width=250, key="joy_camera")
+
+        st.session_state["joy_on"] = value_camera
+        if st.session_state["joy_on"]:
+
+            xmax, ymax = 225, 225
+            xmiddle, ymiddle = int(0.5*xmax), int(0.5*ymax)
+            xs = np.linspace(value_camera["x"], xmiddle, 3)
+            ys = np.linspace(value_camera["y"], ymiddle, 3)
+
+            xcs, yxc = int(200*(value_camera["x"]-xmiddle)/xmax), int(-200*(value_camera["y"]-ymiddle)/ymax)
+            st.write(f"move/{yxc}/{xcs}/500")
+            send_bot_command(f"move/{yxc}/{xcs}/200")
+            #send_bot_command("servo/UP/10")
+            #send_bot_command("servo/DOWN/10")
+            #send_bot_command("servo/LEFT/10")
+
+            st.write(f"{xcs}, {yxc}")
+
+            for t in range(3):
+                point = xs[t], ys[t]
+                point = xmiddle, ymiddle
+
+                coords = get_ellipse_coords(point)
+                draw_remote.ellipse(coords, fill="blue")
+            st.session_state["joy_on"] = False
+
+        st.write(value_camera)
+
+
+
+
+
+
     st.sidebar.header("🤖Streamlit Bot Control")
     st.sidebar.text_input("IP", key="bot_ip")
     st.sidebar.number_input("Port", key="bot_port", step=1)
     if not st.session_state["is_on"]:
-        st.sidebar.button(
-            "Connect to the bot",
-            type="primary",
-            on_click=lambda: set_var("is_on", True),
-        )
+        st.sidebar.button("Connect to the bot", type="primary", on_click=lambda: set_var("is_on", True))
         st.sidebar.write(f"Status : 💥 server is not connected")
     else:
         battery = 6
         battery_text = "🔋" * battery + "🪫" * (10 - battery)  # 🔵⭕⚪ 🔗💥
-        st.sidebar.button(
-            "Disconnect to the bot",
-            type="primary",
-            on_click=lambda: set_var("is_on", False),
-        )
+        st.sidebar.button("Disconnect to the bot", type="primary", on_click=lambda: set_var("is_on", False))
         st.sidebar.write(f"Status : {battery_text}")
 
     is_camera_on = st.sidebar.checkbox("🎥Switch on/off the camera", value=True, disabled=not st.session_state.is_on)
@@ -149,7 +256,7 @@ def main():
 
     st.sidebar.markdown("""<hr>""", unsafe_allow_html=True)
     st.sidebar.markdown(
-        """<small>[streamlit-botcontrol](https://github.com/guydegnol/streamlit-botcontrol)  | Sep 2023 | [Guillaume Therin](https://guydegnol.github.io/)</small>""",
+        """<small>[streamlit-botcontrol](https://github.com/gtherin/streamlit-botcontrol)  | Sep 2023 | [Guillaume Therin](https://guydegnol.github.io/)</small>""",
         unsafe_allow_html=True,
     )
 
@@ -287,7 +394,7 @@ def main():
             on_color="primary",
         )
 
-    components.iframe("http://192.168.1.101:9000/mjpg", width=700, height=500)
+    components.iframe("http://192.168.1.122:9000/mjpg", width=700, height=500)
 
     col1, col2, col3 = st.columns(3)
 
