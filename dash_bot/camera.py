@@ -14,18 +14,18 @@ from . import parameters
 )
 def update_output(force, angle):
 
-    return ""
     if angle >=0 and angle <= 180:
         horizontal = int(-(angle-90) / 3)
-        horizontal = int(np.clip(horizontal, -45, 45))
-        vertical = 0 if force is None else int(force*value*20)
+        vertical = 0 if force is None else int(force*12)
     else:
         horizontal = int((angle-270) / 3)
-        horizontal = int(np.clip(horizontal, -45, 45))
-        vertical = 0 if force is None else -int(force*value*20)
+        vertical = 0 if force is None else -int(force*12)
+
+    horizontal = int(np.clip(horizontal, -45, 45))
+    vertical = int(np.clip(vertical, -45, 45))
 
     print(f'Angle is {horizontal}, force is {vertical}')
-    #pirask.send_bot_command(f"/jmove/{speed}/{angle}")
+    pirask.send_bot_command(f"camera/{vertical}/{horizontal}", fake=False)
     return [f'Angle is {horizontal}, force is {vertical}']
 
 def get_iframe():
