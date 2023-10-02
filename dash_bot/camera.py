@@ -28,10 +28,11 @@ def update_output(force, angle):
     #pirask.send_bot_command(f"/jmove/{speed}/{angle}")
     return [f'Angle is {horizontal}, force is {vertical}']
 
-def get_widgets():
+def get_iframe():
+    return html.Iframe(src="http://192.168.1.122:9000/mjpg", style={"height": "500px", "width": "700px"})
 
+def get_widgets():
     return [
         daq.Joystick(id='camera_joystick', label="Pilot Camera", angle=0),
         html.Div(id='camera_joystick_output'),
-        html.Iframe(src="http://192.168.1.122:9000/mjpg", style={"height": "500px", "width": "700px"}),
         ]

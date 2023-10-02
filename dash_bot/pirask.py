@@ -10,7 +10,6 @@ from . import parameters
 def send_bot_command(command, fake=False):
     command = f"http://{parameters.default['bot_ip']}:{parameters.default['bot_port']}/{command}"
     print(command)
-    return command
     if not fake:
         r = requests.get(command)
         print(r.text)

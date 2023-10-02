@@ -23,7 +23,7 @@ def update_output(angle, force, value):
         angle = int(np.clip(angle, -45, 45))
         speed = 0 if force is None else -int(force*value*20)
 
-    pirask.send_bot_command(f"/jmove/{speed}/{angle}")
+    pirask.send_bot_command(f"jmove/{speed}/{angle}")
     return [f'Angle is {angle}, force is {force}, value is {value}, speed is {speed}']
 
 def get_widgets():

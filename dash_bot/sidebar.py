@@ -3,22 +3,10 @@ import pandas as pd
 import dash_daq as daq
 import dash_bootstrap_components as dbc
 
-
 from .music import get_music_objs
 from .video import get_video_objs
 from . import pirask
 
-
-# the style arguments for the sidebar. We use position:fixed and a fixed width
-SIDEBAR_STYLE = {
-    "position": "fixed",
-    "top": 0,
-    "left": 0,
-    "bottom": 0,
-    "width": "18rem",
-    "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
-}
 
 @callback(Output("ipport_output", "children"), Input("ip_input", "value"), Input("port_input", "value"))
 def update_output(ip_input, port_input):
@@ -46,7 +34,15 @@ sidebar = html.Div(
             pills=True,
         ),
     ],
-    style=SIDEBAR_STYLE,
+    style={
+        "position": "fixed",
+        "top": 0,
+        "left": 0,
+        "bottom": 0,
+        "width": "18rem",
+        "padding": "2rem 1rem",
+        "background-color": "#f8f9fa",
+},
 )
 
 @callback(Output('connect_robot_switch_output', 'children'), Input('connect_robot_switch', 'value'))

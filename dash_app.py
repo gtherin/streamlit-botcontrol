@@ -7,8 +7,10 @@ import requests
 
 import dash_bot
 import numpy as np
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 app.config.suppress_callback_exceptions=True
+# CERULEAN, COSMO, CYBORG, DARKLY, FLATLY, JOURNAL, LITERA, LUMEN, LUX, MATERIA, MINTY, MORPH, 
+# PULSE, QUARTZ, SANDSTONE, SIMPLEX, SKETCHY, SLATE, SOLAR, SPACELAB, SUPERHERO, UNITED, VAPOR, YETI, ZEPHYR.
 
 
 @callback(
@@ -23,18 +25,31 @@ def update_output(angle, force):
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
 
-    objs = [html.H1(children='My little robot', style={'textAlign':'center'})]
+    return html.Div(
+        [
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dash_bot.camera.get_iframe(),
+                        width={"size": 5},
+                    ),
+                    dbc.Col(html.Div("  "), width={"size": 3},),
+                    dbc.Col(html.Div(
+                        dash_bot.pilot.get_widgets() + 
+                        dash_bot.camera.get_widgets() + 
+                        dash_bot.get_programs_objs()
+                    ), width={"size": 3},
+                    ),
+                ]
+            ),
+            dbc.Row(dash_bot.music.get_audio_objs()),
+
+        ]
+    , className="p-3 bg-light rounded-3")
 
     #if pathname == "/":
     #    objs.append(html.P("This is the content of the home page!"))
 
-    objs += dash_bot.pilot.get_widgets()
-    objs += dash_bot.camera.get_widgets()
-    objs += dash_bot.get_programs_objs()
-    objs += dash_bot.music.get_audio_objs()
-
-    # If the user tries to reach a different page, return a 404 message
-    return html.Div(objs, className="p-3 bg-light rounded-3")
 
 content = html.Div(id="page-content", style={
     "margin-left": "18rem",
@@ -44,15 +59,6 @@ content = html.Div(id="page-content", style={
 
 
 app.layout = html.Div([dcc.Location(id="url"), dash_bot.sidebar, content])
-
-@callback(
-    Output('graph-content', 'figure'),
-    Input('dropdown-selection', 'value')
-)
-def update_graph(value):
-    dff = df[df.country==value]
-    return px.line(dff, x='year', y='pop')
-
 
 if __name__ == '__main__':
     app.run(port=8050, debug=True)#, dev_tools_ui=False)#, host='127.0.0.1')
