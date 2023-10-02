@@ -29,6 +29,7 @@ default_data = {
     "bot_port": 9001,
     "video_port": 9000,
     "is_on": False,
+    "camera_is": False,
     "video_color_is": False,
     "bot_ip": "192.168.1.122",
 }
@@ -114,7 +115,7 @@ def get_ellipse_coords(point: tuple[int, int]) -> tuple[int, int, int, int]:
 
 def main():
 
-    if 1:
+    if 0:
         generate_targets()
     from PIL import Image
 
@@ -179,11 +180,6 @@ def main():
 
         st.write(value_camera)
 
-
-
-
-
-
     st.sidebar.header("🤖Streamlit Bot Control")
     st.sidebar.text_input("IP", key="bot_ip")
     st.sidebar.number_input("Port", key="bot_port", step=1)
@@ -198,6 +194,7 @@ def main():
 
     is_camera_on = st.sidebar.checkbox("🎥Switch on/off the camera", value=True, disabled=not st.session_state.is_on)
     with st.sidebar.expander("🎥 Camera settings", expanded=is_camera_on):
+        #send_bot_command("camera/on")
         st.checkbox(
             "🫠Do face recognition ?",
             key="video_face_is",
